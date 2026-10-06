@@ -2,42 +2,34 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Event extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
-        'status',
-        'requester_id',
-        'auditorium_id', 
-        'title', 
-        'instructor_name',
-        'support_staff',
-        'description', 
-        'capacity', 
-        'start_time', 
-        'end_time'
+        'title',
+        'start_time',
+        'end_time',
+        'user_name',
+        'user_phone',
+        'authority_name',
+        'responsible',
+        'salon',
+        'event_type',
+        'requirements',
+        'capacity',
+        'entry_type',
+        'external_coordinator_name',
+        'external_coordinator_phone',
+        'special_requirements',
+        'registered_by',
+        'internal_coordinator',
     ];
-    public function equipment()
-    {
-        return $this->belongsToMany(Equipment::class)->withPivot('quantity_reserved');
-    }
 
-    // Esta es la función mágica que Laravel estaba buscando
-    public function auditorium()
-    {
-        return $this->belongsTo(Auditorium::class);
-    }
-    public function users()
-    {
-        return $this->belongsToMany(User::class);
-    }
-    // Relación para saber qué usuario solicitó este evento
-    public function requester()
-    {
-        return $this->belongsTo(User::class, 'requester_id');
-    }
-    
+    protected $casts = [
+        'requirements' => 'array',
+    ];
 }
-
-    

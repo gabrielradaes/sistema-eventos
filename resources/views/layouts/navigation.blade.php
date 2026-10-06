@@ -16,21 +16,7 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-                    <!-- Enlaces del Admin -->
-                    @if(auth()->user()->role === 'admin')
-                        <x-nav-link :href="route('events.requests')" :active="request()->routeIs('events.requests')">
-                            Solicitudes Pendientes
-                        </x-nav-link>
-                    @endif
-
-                    @if(auth()->user()->role === 'funcionario')
-                        <x-nav-link :href="route('events.available')" :active="request()->routeIs('events.available')">
-                            Cursos Disponibles
-                        </x-nav-link>
-                        <x-nav-link :href="route('events.my')" :active="request()->routeIs('events.my')">
-                            Mis Eventos
-                        </x-nav-link>
-                    @endif
+                    
                 </div>
             </div>
 

@@ -42,7 +42,14 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        // 1. Leemos cuál de los 3 botones circulares seleccionó el usuario
+        $preferencia = $this->input('session_preference');
+
+        // 2. Si eligió "keep" (Mantener mi sesión iniciada), le decimos a Laravel que lo recuerde.
+        $recordarSesion = ($preferencia === 'keep');
+
+        // 3. Procesamos el login usando esa preferencia
+        if (! Auth::attempt($this->only('email', 'password'), $recordarSesion)) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([

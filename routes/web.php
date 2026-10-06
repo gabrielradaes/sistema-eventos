@@ -1,56 +1,51 @@
 <?php
-
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::post('/eventos/inscribir', [EventController::class, 'enroll'])->name('events.enroll');
-
 Route::get('/dashboard', function () {
-    // Obtenemos todos los datos necesarios para ambas vistas (Admin y Funcionario)
-    $events = \App\Models\Event::with('auditorium')->get();
-    $auditoriums = \App\Models\Auditorium::all();
-    $equipments = \App\Models\Equipment::all();
-    
-    return view('dashboard', compact('events', 'auditoriums', 'equipments'));
+    return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Ruta para que el funcionario envíe su solicitud
-Route::post('/eventos/solicitar', [EventController::class, 'requestEvent'])->name('events.request')->middleware('auth');
+Route::get('/api/salones/events', [EventController::class, 'getEvents'])->name('api.salones.events');
+Route::post('/api/salones/events', [EventController::class, 'store'])->name('api.salones.store');
 
-// --- RUTAS PROTEGIDAS PARA EL SISTEMA ---
+// Rutas para el formulario de protocolo detallado
+Route::get('/salones/reservas/{id}/protocolo', [EventController::class, 'protocolForm'])->name('salones.protocolo');
+Route::put('/salones/reservas/{id}/protocolo', [EventController::class, 'updateProtocol'])->name('salones.protocolo.update');
+
 Route::middleware('auth')->group(function () {
-    // 1. Mostrar el formulario de creación
-    Route::get('/eventos/crear', [EventController::class, 'create'])->name('events.create');
-    
-    // 2. Procesar el formulario y guardar en MySQL
-    Route::post('/eventos', [EventController::class, 'store'])->name('events.store');
-
-    // Rutas de perfil (vienen por defecto con Breeze)
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/mis-eventos', [EventController::class, 'myEvents'])->name('events.my');
+    Route::get('/salones/usar', function () {
+    return view('salones.usar');
+    })->name('salones.usar')->middleware('auth');
 
-    // Mostrar formulario de edición
-    Route::get('/eventos/{event}/editar', [EventController::class, 'edit'])->name('events.edit');
-    
-    // Procesar la actualización
-    Route::put('/eventos/{event}', [EventController::class, 'update'])->name('events.update');
+    Route::get('/api/salones/events', [EventController::class, 'getEvents'])->name('api.salones.events');
+    Route::post('/api/salones/events', [EventController::class, 'store'])->name('api.salones.store');
 
-    Route::get('/cursos-disponibles', [EventController::class, 'availableCourses'])->name('events.available');
-
-    // Bandeja de solicitudes (Solo Admin)
-    Route::get('/solicitudes', [EventController::class, 'requests'])->name('events.requests');
-    
-    // Acciones de Aprobar y Rechazar
-    Route::patch('/solicitudes/{event}/aprobar', [EventController::class, 'approve'])->name('events.approve');
-    Route::patch('/solicitudes/{event}/rechazar', [EventController::class, 'reject'])->name('events.reject');
 });
+
+Route::get('/api/events/dates', function (\Illuminate\Http\Request $request) {
+    $month = $request->input('month', date('m'));
+    $year = $request->input('year', date('Y'));
+
+    try {
+        $dates = \App\Models\Event::whereMonth('start_time', $month)
+            ->whereYear('start_time', $year)
+            ->selectRaw('DATE(start_time) as date')
+            ->distinct()
+            ->pluck('date');
+        return response()->json($dates);
+    } catch (\Exception $e) {
+        return response()->json([]);
+    }
+})->middleware('auth');
 
 require __DIR__.'/auth.php';
