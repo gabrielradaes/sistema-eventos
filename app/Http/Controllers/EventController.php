@@ -45,7 +45,6 @@ class EventController extends Controller
         if (auth()->user()->role === 'usuario' || empty(auth()->user()->role)) {
             return response()->json(['success' => false, 'message' => 'No tienes permiso para crear.'], 403);
         }
-
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'start_time' => 'required|date',
@@ -64,6 +63,12 @@ class EventController extends Controller
             'success' => true, 
             'redirect_url' => route('salones.protocolo', $event->id)
         ]);
+    }
+
+    public function showApi($id)
+    {
+        $event = Event::findOrFail($id);
+        return response()->json($event);
     }
 
     // ACTUALIZAR RÁPIDO: Guardar cambios hechos desde el modal flotante de "Editar reserva"
@@ -169,5 +174,53 @@ class EventController extends Controller
         $event->restore();
 
         return back(); // Te devuelve a la papelera automáticamente
+    }
+    // Mostrar la vista de supervisión de los formularios (Tabla con IDs y Paginación)
+    public function supervisarReservas()
+    {
+        // Traemos los eventos paginados de 10 en 10, del más nuevo al más viejo
+        $events = Event::orderBy('created_at', 'desc')->paginate(10);
+        
+        // Contamos cuántos hay en total para mostrar en el título
+        $totalFormularios = Event::count();
+        
+        // Obtenemos el último evento para el texto del pie de página
+        $ultimoEvento = Event::orderBy('created_at', 'desc')->first();
+
+        return view('salones.supervisar_reservas', compact('events', 'totalFormularios', 'ultimoEvento'));
+    }
+    // Mostrar el formulario en blanco para crear una nueva reserva
+    public function createForm()
+    {
+        return view('salones.crear_reserva');
+    }
+
+    // Guardar la reserva desde el formulario completo
+    public function storeForm(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'authority_name' => 'nullable|string',
+            'event_type' => 'nullable|string',
+            'requirements' => 'nullable|array',
+            'capacity' => 'nullable|integer',
+            'entry_type' => 'nullable|string',
+            'external_coordinator_name' => 'nullable|string',
+            'external_coordinator_phone' => 'nullable|string',
+            'special_requirements' => 'nullable|string',
+            'registered_by' => 'nullable|string',
+            'internal_coordinator' => 'nullable|string',
+            'salon' => 'nullable|string',
+        ]);
+
+        // Por defecto le asignamos un horario y un salón si no vienen especificados
+        $validated['start_time'] = now();
+        $validated['end_time'] = now()->addHour();
+        $validated['salon'] = $validated['salon'] ?? 'Salón Principal';
+        $validated['user_name'] = auth()->user()->name ?? 'Administrador';
+
+        Event::create($validated);
+
+        return redirect()->route('reservas.supervisar')->with('success', 'Reserva creada con éxito');
     }
 }

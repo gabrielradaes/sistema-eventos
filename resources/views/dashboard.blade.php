@@ -51,10 +51,10 @@
                                 </td>
                                 <td class="py-3 px-4">
                                     <div class="flex space-x-6">
-                                        <a href="#" class="text-[#3b82f6] hover:underline flex items-center">
+                                        <a href="{{ route('reservas.create') }}" class="text-[#3b82f6] hover:underline flex items-center">
                                             <i class="fa-regular fa-file-lines mr-2"></i> Usar
                                         </a>
-                                        <a href="#" class="text-[#3b82f6] hover:underline flex items-center">
+                                        <a href="{{ route('reservas.supervisar') }}" class="text-[#3b82f6] hover:underline flex items-center">
                                             <i class="fa-solid fa-sliders mr-2"></i> Supervisar
                                         </a>
                                     </div>

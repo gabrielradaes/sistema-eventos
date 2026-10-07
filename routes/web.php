@@ -16,13 +16,18 @@ Route::get('/dashboard', function () {
 // GRUPO PROTEGIDO: Todo lo que esté aquí adentro requiere haber iniciado sesión
 Route::middleware('auth')->group(function () {
     
+
+    Route::get('/api/salones/events/{id}', [EventController::class, 'showApi']);
+    Route::get('/reservas/crear', [EventController::class, 'createForm'])->name('reservas.create');
+    Route::post('/reservas/crear', [EventController::class, 'storeForm'])->name('reservas.store_form');
     // === GESTIÓN DE USUARIOS ===
     Route::get('/salones/usuarios', function () {
         $users = \App\Models\User::all();
         return view('salones.usuarios', compact('users'));
     })->name('salones.usuarios');
 
-
+    // === NUEVA VISTA: SUPERVISAR FORMULARIOS (Tabla de IDs) ===
+    Route::get('/reservas/supervisar', [EventController::class, 'supervisarReservas'])->name('reservas.supervisar');
     // === PAPELERA ===
     Route::get('/salones/papelera', [EventController::class, 'papelera'])->name('salones.papelera');
     Route::delete('/salones/papelera/vaciar', [EventController::class, 'vaciarPapelera'])->name('salones.vaciar_papelera');
