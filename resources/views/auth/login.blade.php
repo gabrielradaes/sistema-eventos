@@ -7,7 +7,7 @@
         <!-- Encabezado -->
         <div class="mb-8 text-center">
             <h2 class="text-3xl font-extrabold text-[#0a1142] mb-2 font-sans tracking-tight">
-                Iniciar sesión
+                SUPERCADI
             </h2>
             <p class="text-lg text-[#0a1142] font-medium">
                 Iniciar sesión como administrador

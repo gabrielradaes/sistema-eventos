@@ -9,7 +9,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function schemaUp(): void
+    public function up(): void
 {
     Schema::create('events', function (Blueprint $table) {
         $table->id();

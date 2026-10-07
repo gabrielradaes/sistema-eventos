@@ -56,7 +56,7 @@
                     <button style="background-color: #f9fafb; padding: 6px 16px; font-weight: bold; color: #374151; border-right: 1px solid #e5e7eb; font-size: 14px;">
                         <i class="fa-regular fa-calendar text-blue-500" style="margin-right: 8px;"></i> Usar
                     </button>
-                    <a href="#" style="background-color: white; padding: 6px 16px; color: #3b82f6; font-size: 14px; text-decoration: none;">
+                    <a href="{{ route('salones.supervisar') }}" style="background-color: white; padding: 6px 16px; color: #3b82f6; font-size: 14px; text-decoration: none;">
                         <i class="fa-solid fa-sliders" style="margin-right: 8px;"></i> Supervisar
                     </a>
                 </div>
@@ -202,6 +202,98 @@
                 </form>
             </div>
         </div>
+        <!-- MODAL FLOTANTE "EDITAR RESERVA" -->
+        <div id="edit-booking-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center;">
+            <div style="background: white; width: 600px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); overflow: hidden;">
+                
+                <!-- Cabecera del Modal -->
+                <div style="padding: 16px 20px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
+                    <h3 style="font-size: 16px; font-weight: bold; color: #475b75;">Editar reserva</h3>
+                    <button id="close-edit-modal" style="background: none; border: none; font-size: 18px; cursor: pointer; color: #9ca3af;"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <!-- Cuerpo del Formulario -->
+                <form id="edit-booking-form" style="padding: 20px;">
+                    @csrf
+                    <input type="hidden" id="edit-event-id" name="id">
+                    
+                    <div style="display: flex; gap: 10px; margin-bottom: 16px; align-items: center;">
+                        <i class="fa-regular fa-clock" style="color: #6b7280; width: 20px; text-align: center;"></i>
+                        <input type="text" id="edit-start" name="start_time" style="border: 1px solid #d1d5db; border-radius: 4px; padding: 6px; font-size: 13px; width: 160px;" required>
+                        <span style="font-size: 13px; color: #4b5563;">hasta</span>
+                        <input type="text" id="edit-end" name="end_time" style="border: 1px solid #d1d5db; border-radius: 4px; padding: 6px; font-size: 13px; width: 160px;" required>
+                    </div>
+
+                    <div style="margin-bottom: 16px; display: flex; gap: 10px; align-items: flex-start;">
+                        <i class="fa-solid fa-align-left" style="color: #6b7280; width: 20px; text-align: center; margin-top: 10px;"></i>
+                        <textarea id="edit-title" name="title" rows="2" style="flex: 1; border: 1px solid #d1d5db; border-radius: 4px; padding: 8px; font-size: 13px; background: #f9fafb;" required></textarea>
+                    </div>
+
+                    <div style="margin-bottom: 16px; display: flex; gap: 10px; align-items: center;">
+                        <i class="fa-solid fa-user" style="color: #6b7280; width: 20px; text-align: center;"></i>
+                        <input type="text" id="edit-username" name="user_name" style="width: 250px; border: 1px solid #d1d5db; border-radius: 4px; padding: 8px; font-size: 13px; background: #f9fafb;">
+                    </div>
+
+                    <div style="margin-bottom: 16px; display: flex; gap: 10px; align-items: center;">
+                        <i class="fa-solid fa-mobile-screen" style="color: #6b7280; width: 20px; text-align: center;"></i>
+                        <input type="text" id="edit-phone" name="user_phone" style="width: 250px; border: 1px solid #d1d5db; border-radius: 4px; padding: 8px; font-size: 13px; background: #f9fafb;">
+                    </div>
+
+                    <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
+
+                    <div style="margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
+                        <label style="width: 160px; font-size: 13px; color: #4b5563;">Nombre de autoridad *</label>
+                        <input type="text" id="edit-authority" name="authority_name" style="flex: 1; border: 1px solid #d1d5db; border-radius: 4px; padding: 6px; font-size: 13px; background: #f9fafb;">
+                    </div>
+
+                    <div style="margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
+                        <label style="width: 160px; font-size: 13px; color: #4b5563;">Responsable del evento *</label>
+                        <textarea id="edit-responsible" name="responsible" rows="2" style="flex: 1; border: 1px solid #d1d5db; border-radius: 4px; padding: 6px; font-size: 13px; background: #f9fafb;"></textarea>
+                    </div>
+
+                    <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                        <label style="width: 160px; font-size: 13px; color: #4b5563;">Salones</label>
+                        <select id="edit-salon" name="salon" style="width: 200px; border: 1px solid #d1d5db; border-radius: 4px; padding: 6px; font-size: 13px;">
+                            <option value="Salón Andrés Ibáñez - PL">Salón Andrés Ibáñez - PL</option>
+                            <option value="Salón Marcelo Quiroga - PL">Salón Marcelo Quiroga - PL</option>
+                            <option value="Salón de Honor - P16">Salón de Honor - P16</option>
+                            <option value="Multipropósito - PB">Multipropósito - PB</option>
+                            <option value="Patio Histórico - PB">Patio Histórico - PB</option>
+                            <option value="Hemiciclo">Hemiciclo</option>
+                            <option value="SISTEMAS">SISTEMAS</option>
+                        </select>
+                    </div>
+
+                    <!-- Footer y Botones de Acción -->
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                        <div>
+                            <span id="edit-footer-text" style="font-size: 11px; color: #9ca3af;"></span>
+                        </div>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            
+                            <button type="button" id="btn-edit-cancel" style="background: white; border: 1px solid #d1d5db; padding: 6px 16px; border-radius: 4px; font-size: 13px; cursor: pointer;">Cerrar</button>
+                            
+                            {{-- Si el usuario ES ADMIN o SUPERADMIN, mostramos Editar y Protocolo --}}
+                            @if(auth()->user()->role === 'admin' || auth()->user()->role === 'superadmin')
+                                <button type="button" id="btn-edit-protocol" style="background: white; color: #3b82f6; border: 1px solid #3b82f6; padding: 6px 10px; border-radius: 4px; cursor: pointer;" title="Formulario de protocolo">
+                                    <i class="fa-solid fa-file-lines"></i>
+                                </button>
+                                
+                                <button type="submit" id="btn-edit-update" style="background: #2563eb; color: white; border: none; padding: 6px 16px; border-radius: 4px; font-size: 13px; font-weight: bold; cursor: pointer;">Actualizar reserva</button>
+                            @endif
+
+                            {{-- Si el usuario ES ÚNICAMENTE ADMIN, mostramos el basurero --}}
+                            @if(auth()->user()->role === 'admin')
+                                <button type="button" id="btn-edit-delete" style="background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;" title="Eliminar reserva">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            @endif
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -230,9 +322,46 @@
 
                 // Al hacer clic o seleccionar un bloque de tiempo
                 select: function(info) {
+                    // Verificamos si el usuario es solo lectura usando Blade
+                    let userRole = "{{ auth()->user()->role ?? 'usuario' }}";
+                    if(userRole === 'usuario') {
+                        alert('Modo de solo lectura: No tienes permisos para crear reservas.');
+                        return; // Corta la ejecución aquí, el modal no se abre
+                    }
+
                     var modal = document.getElementById('booking-modal');
                     document.getElementById('modal-start').value = info.startStr.slice(0, 19).replace('T', ' ');
                     document.getElementById('modal-end').value = info.endStr.slice(0, 19).replace('T', ' ');
+                    modal.style.display = 'flex';
+                },
+
+                // Al hacer clic en un evento YA CREADO
+                eventClick: function(info) {
+                    var modal = document.getElementById('edit-booking-modal');
+                    var e = info.event;
+                    var props = e.extendedProps; // Aquí vienen los datos extra desde la base de datos
+
+                    // Llenar el formulario con los datos del evento
+                    document.getElementById('edit-event-id').value = e.id;
+                    document.getElementById('edit-start').value = e.startStr.slice(0, 16).replace('T', ' ');
+                    document.getElementById('edit-end').value = e.endStr ? e.endStr.slice(0, 16).replace('T', ' ') : '';
+                    document.getElementById('edit-title').value = e.title;
+                    
+                    document.getElementById('edit-username').value = props.user_name || '';
+                    document.getElementById('edit-phone').value = props.user_phone || '';
+                    document.getElementById('edit-authority').value = props.authority_name || '';
+                    document.getElementById('edit-responsible').value = props.responsible || '';
+                    document.getElementById('edit-salon').value = props.salon || '';
+
+                    // Texto chiquito del footer
+                    var fecha = props.created_at ? props.created_at.slice(0, 10) : '';
+                    document.getElementById('edit-footer-text').innerText = 'Creado el ' + fecha + ' por ' + (props.user_name || 'usuario');
+
+                    // Cambiar el enlace del botón de protocolo (asumiendo que tu ruta es /salones/protocolo/{id})
+                    document.getElementById('btn-edit-protocol').onclick = function() {
+                        window.location.href = '/salones/protocolo/' + e.id;
+                    };
+
                     modal.style.display = 'flex';
                 },
 
@@ -261,6 +390,57 @@
             // Controladores del Modal
             document.getElementById('close-modal').addEventListener('click', () => { document.getElementById('booking-modal').style.display = 'none'; });
             document.getElementById('btn-cancel').addEventListener('click', () => { document.getElementById('booking-modal').style.display = 'none'; });
+
+
+            // Cerrar el modal de edición
+            document.getElementById('close-edit-modal').addEventListener('click', () => { document.getElementById('edit-booking-modal').style.display = 'none'; });
+            document.getElementById('btn-edit-cancel').addEventListener('click', () => { document.getElementById('edit-booking-modal').style.display = 'none'; });
+
+            // Enviar formulario de ACTUALIZAR por AJAX
+            document.getElementById('edit-booking-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                var eventId = document.getElementById('edit-event-id').value;
+                var formData = new FormData(this);
+                formData.append('_method', 'PUT'); // Laravel necesita esto para saber que es un UPDATE
+
+                fetch('/api/salones/events/' + eventId, {
+                    method: 'POST', // Mandamos POST pero con _method PUT adentro
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.success) {
+                        document.getElementById('edit-booking-modal').style.display = 'none';
+                        calendar.refetchEvents(); // Recarga los cuadritos mágicamente
+                    }
+                });
+            });
+
+            // Botón ELIMINAR por AJAX
+            document.getElementById('btn-edit-delete').addEventListener('click', function() {
+                if(confirm('¿Estás seguro de que deseas eliminar esta reserva?')) {
+                    var eventId = document.getElementById('edit-event-id').value;
+                    
+                    fetch('/api/salones/events/' + eventId, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.success) {
+                            document.getElementById('edit-booking-modal').style.display = 'none';
+                            calendar.refetchEvents();
+                        }
+                    });
+                }
+            });
 
             // Enviar formulario por AJAX
             document.getElementById('booking-form').addEventListener('submit', function(e) {

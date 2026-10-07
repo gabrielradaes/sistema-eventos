@@ -12,7 +12,7 @@
 
             <!-- Título Principal -->
             <h1 class="text-[28px] font-bold text-[#475b75] mb-10 tracking-tight">
-                Resumen de Superusuario de Protocolo Camara de Dip
+                Resumen de Supercadi de Protocolo Camara de Dip
             </h1>
 
             <!-- TABLA 1: Recursos y Reservas -->
@@ -37,7 +37,7 @@
                                         <a href="{{ route('salones.usar') }}" class="text-[#3b82f6] hover:underline flex items-center">
                                             <i class="fa-regular fa-calendar mr-2"></i> Usar
                                         </a>
-                                        <a href="#" class="text-[#3b82f6] hover:underline flex items-center">
+                                        <a href="{{ route('salones.supervisar') }}" class="text-[#3b82f6] hover:underline flex items-center">
                                             <i class="fa-solid fa-sliders mr-2"></i> Supervisar
                                         </a>
                                     </div>
